@@ -1,0 +1,32 @@
+{
+  "name": "devopsflow-portal",
+  "version": "1.0.0",
+  "description": "Production-ready Node.js & PostgreSQL Cloud-Native DevOps application with automated Jenkins CI/CD, Docker, and Kubernetes deployment",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "keywords": [
+    "jenkins",
+    "cicd",
+    "docker",
+    "kubernetes",
+    "k8s",
+    "nodejs",
+    "postgres",
+    "postgresql",
+    "devops"
+  ],
+  "author": "DevOps Engineer",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "pg": "^8.11.5"
+  },
+  "devDependencies": {
+    "supertest": "^6.3.4"
+  }
+}
