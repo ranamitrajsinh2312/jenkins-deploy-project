@@ -15,6 +15,7 @@ pipeline {
     parameters {
         choice(name: 'ENVIRONMENT', choices: ['dev', 'staging', 'production'], description: 'Target deployment environment')
         booleanParam(name: 'FORCE_DEPLOY', defaultValue: false, description: 'Skip tests and force deployment')
+        booleanParam(name: 'PUSH_TO_REGISTRY', defaultValue: true, description: 'Push built image to Docker Hub registry')
         booleanParam(name: 'DEPLOY_TO_K8S', defaultValue: false, description: 'Deploy to Kubernetes (requires active k8s cluster)')
     }
 
@@ -50,6 +51,9 @@ pipeline {
         }
 
         stage('📤 Push to Docker Registry') {
+            when {
+                expression { return params.PUSH_TO_REGISTRY == true }
+            }
             steps {
                 echo '🔐 Authenticating with Docker Registry...'
                 withCredentials([usernamePassword(
@@ -57,8 +61,10 @@ pipeline {
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    '''
                     sh """
-                        echo "\$DOCKER_PASS" | docker login -u "\$DOCKER_USER" --password-stdin
                         echo "🚀 Pushing image tags to Docker Hub..."
                         docker push ${env.IMAGE_NAME}:${env.IMAGE_TAG}
                         docker push ${env.IMAGE_NAME}:latest
