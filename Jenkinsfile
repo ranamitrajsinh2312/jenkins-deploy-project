@@ -15,6 +15,7 @@ pipeline {
     parameters {
         choice(name: 'ENVIRONMENT', choices: ['dev', 'staging', 'production'], description: 'Target deployment environment')
         booleanParam(name: 'FORCE_DEPLOY', defaultValue: false, description: 'Skip tests and force deployment')
+        booleanParam(name: 'DEPLOY_TO_K8S', defaultValue: false, description: 'Deploy to Kubernetes (requires active k8s cluster)')
     }
 
     stages {
@@ -67,6 +68,9 @@ pipeline {
         }
 
         stage('☸️ Deploy to Kubernetes') {
+            when {
+                expression { return params.DEPLOY_TO_K8S == true }
+            }
             steps {
                 echo '⚙️ Preparing Kubernetes manifests...'
                 sh """
@@ -99,6 +103,9 @@ pipeline {
         }
 
         stage('🔍 Verify Deployment') {
+            when {
+                expression { return params.DEPLOY_TO_K8S == true }
+            }
             steps {
                 withCredentials([file(credentialsId: env.KUBECONFIG_CRED_ID, variable: 'KUBECONFIG')]) {
                     sh """
