@@ -30,7 +30,7 @@ pipeline {
 
         stage('🧪 Lint & Unit Tests') {
             when {
-                expression { return !params.FORCE_DEPLOY }
+                expression { return params.FORCE_DEPLOY != true && params.FORCE_DEPLOY != 'true' }
             }
             steps {
                 echo '📦 Installing application dependencies...'
